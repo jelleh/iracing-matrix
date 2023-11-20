@@ -70,7 +70,7 @@ Download [iracing_matrix-base.stl](./housing/iracing_matrix-base.stl)
 
 ## Executable
 
-Download the prebuild [iracing_matrix.exe](program/x64/Release/iracing_matrix.exe), or buid it from source with Visual Studio.  
+Download the prebuild [iracing_matrix.exe](program/x64/Release/iracing_matrix.exe), or build it from source with Visual Studio.  
 The executable will interact with the iracing API, and send updates over the COM port to the Arduino.  
 When started, it wil scan all the available COM ports for the iRacing Matrix,  
 You can provide a fixed COM in the paramaters for faster startup.  
