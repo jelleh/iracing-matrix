@@ -12,7 +12,7 @@ The goal is to build a plug and race, easy to setup, low latency gear and RPM in
 ![Housing front](./media/iracing_matrix_1.jpg)
 ![Housing back](./media/iracing_matrix_2.jpg)
 ![Housing inside](./media/iracing_matrix_inside.jpg)
->STL files included and available on thingiverse
+>STL files included and available on [Thingiverse](https://www.thingiverse.com/thing:6325240)
   
 **iRacing Matrix in action**  
 
@@ -37,7 +37,7 @@ To build iRacing Matrix, you will need the following components:
 
 1. **Housing:**
    - Description: The provided housing is build to fit an Arduino nano, feel free to build your own housing.
-   - Example: Available in the housing directory or at Thingiverse
+   - Example: Available in the housing directory or at [Thingiverse](https://www.thingiverse.com/thing:6325240)
 
 2. **Gear indicator:**
    - Description: Gear indicator is a MAX7219 Dot Led Matrix Module
