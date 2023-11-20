@@ -1,0 +1,12 @@
+**/bin/*
+**/*.exe
+**/Release/*
+**/Debug/*
+**/*.sdf
+**/*.opensdf
+**/*.suo
+**/.vs
+.vs
+**/*.opendb
+**/*.vcxproj.user
+
