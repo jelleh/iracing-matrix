@@ -8,9 +8,9 @@ Arduino based low latency RPM and gear indicator for the iRacing motorsport simu
 
 The goal is to build a plug and race, easy to setup, low latency gear and RPM indicator for iRacing.  
 
-<img src="./media/iracing_matrix_1.jpg" width="300" alt="Housing front"></img>
-<img src="./media/iracing_matrix_inside.jpg" width="300" alt="Housing inside"></img>
-<img src="./media/iracing_matrix_2.jpg" width="300" alt="Housing base"></img>
+<img src="./media/iracing_matrix_1.jpg" width="300" alt="Housing front"></img>  
+<img src="./media/iracing_matrix_inside.jpg" width="300" alt="Housing inside"></img>  
+<img src="./media/iracing_matrix_2.jpg" width="300" alt="Housing base"></img>  
   
 >STL files included and available on [Thingiverse](https://www.thingiverse.com/thing:6325240)
   
@@ -63,8 +63,8 @@ To build iRacing Matrix, you will need the following components:
 
 ## Housing
 
-<img src="./media/iracing_matrix-front-stl.jpg" height="350" alt="Housing front"></img>
-<img src="./media/iracing_matrix-base-stl.jpg" height="350" alt="Housing base"> </img>  
+<img src="./media/iracing_matrix-front-stl.jpg" height="250" alt="Housing front"></img>
+<img src="./media/iracing_matrix-base-stl.jpg" height="250" alt="Housing base"> </img>  
 Download [iracing_matrix-fron.stl](./housing/iracing_matrix-front.stl)  
 Download [iracing_matrix-base.stl](./housing/iracing_matrix-base.stl)  
 
