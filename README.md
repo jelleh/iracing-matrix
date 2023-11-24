@@ -6,7 +6,7 @@ Arduino based low latency RPM and gear indicator for the iRacing motorsport simu
 
 ## Overview
 
-The goal is to build a plug and race, easy to setup, low latency gear and RPM indicator for iRacing.  
+The goal is to build a plug-and-race, easy to setup, low latency gear and RPM indicator for iRacing.  
 
 It will display your current speed and RPM on the 7 segment display  
 On the left led strip you will see the braking percentage,  
@@ -33,11 +33,13 @@ The RPM led strip will blink quickly when the RPM percentage is above 99%
 
 ## Components
 
-To build iRacing Matrix, you will need the following components:
+To build iRacing Matrix, you will need the following components:  
+>You can buy all the components on [AliExpress](https://s.click.aliexpress.com/e/_DcGzUr5).  
+  
 
 1. **Microcontroller Board:**
-   - Description: The brain is an Arduino board with usb, the Arduino Nano will fit the housing.
-   - Example: Arduino Nano
+   - Description: The brain is an Arduino board with mini usb, the Arduino Nano will fit the housing.
+   - Example: [Arduino Nano Atmega328 mini usb](https://s.click.aliexpress.com/e/_DkWYniB)
 
 1. **Housing:**
    - Description: The provided housing is build to fit an Arduino nano, feel free to build your own housing.
@@ -45,24 +47,24 @@ To build iRacing Matrix, you will need the following components:
 
 2. **Gear indicator:**
    - Description: Gear indicator is a MAX7219 Dot Led Matrix Module
-   - Example: MAX7219 Dot Led Matrix Module
+   - Example: [MAX7219 Dot Led Matrix Module](https://s.click.aliexpress.com/e/_Dli12on)
 
 3. **RPM and brake indicator:**
    - Description: RPM and brake indicator are two 8 channel WS2812 505 RGB LED strips
-   - Example: WS2812 5050 8 channel RGB LED
+   - Example: [WS2812 5050 8 channel RGB LED](https://s.click.aliexpress.com/e/_DlZAn4x)
 
 4. **Display:**
    - Description: MAX7219 based 8 digits 7 segments display
-   - Example: MAX7219 8 digits 7 segments
+   - Example: [MAX7219 8 digits 7 segments](https://s.click.aliexpress.com/e/_Dewr8uB)
 
 6. **Screws, Wires and hot glue:**
    - Description: Used for assembling and connecting components.
    - Example:
-     - Silicone 28AWG wires
-     - M1.7x6 screws
-     - Hot glue gun
+     - [Silicone 28AWG wires](https://s.click.aliexpress.com/e/_Dm14y7V)
+     - [M1.7x6 screws](https://s.click.aliexpress.com/e/_DB2Fljt)
+     - [Hot glue gun](https://s.click.aliexpress.com/e/_DlX8qxz)
 
-## Schemnatic
+## Schematic
 
 ![Wires](./media/iracing_matrix_wires.jpg)
 
@@ -77,7 +79,7 @@ Download [iracing_matrix-base.stl](./housing/iracing_matrix-base.stl)
 
 Download the prebuild [iracing_matrix.exe](program/x64/Release/iracing_matrix.exe), or build it from source with Visual Studio.  
 The executable will interact with the iracing API, and send updates over the COM port to the Arduino.  
-When started, it wil scan all the available COM ports for the iRacing Matrix,  
+When started, it will scan all the available COM ports for the iRacing Matrix,  
 You can provide a fixed COM in the paramaters for faster startup.  
 > iracing_matrix.exe [COM port]  
 > e.g.: *iracing_matrix.exe 5*  
