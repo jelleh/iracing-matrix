@@ -10,7 +10,7 @@ The goal is to build a plug-and-race, easy to setup, low latency gear and RPM in
 
 It will display your current speed and RPM on the 7 segment display  
 On the left led strip you will see the braking percentage,  
-and the right strip displays the RPM precentage between 70% and 100%  
+and the right strip displays the RPM percentage between 70% and 100%  
 The RPM led strip will blink quickly when the RPM percentage is above 99%  
   
 <img src="./media/iracing_matrix_1.jpg" width="300" alt="Housing front"></img>  
@@ -72,8 +72,7 @@ To build iRacing Matrix, you will need the following components:
 
 <img src="./media/iracing_matrix-front-stl.jpg" height="250" alt="Housing front"></img>
 <img src="./media/iracing_matrix-base-stl.jpg" height="250" alt="Housing base"> </img>  
-Download [iracing_matrix-fron.stl](./housing/iracing_matrix-front.stl)  
-Download [iracing_matrix-base.stl](./housing/iracing_matrix-base.stl)  
+Download on [Thingiverse](https://www.thingiverse.com/thing:6325240/files)  
 
 ## Executable
 
