@@ -77,7 +77,7 @@ Download [iracing_matrix-base.stl](./housing/iracing_matrix-base.stl)
 
 ## Executable
 
-Download the prebuild *iracing_matrix.exe*, or build it from source with Visual Studio.  
+Download the prebuild [iracing_matrix.exe](https://github.com/jelleh/iracing-matrix/releases/download/v1.0/iracing_matrix.exe), or build it from source with Visual Studio.  
 The executable will interact with the iracing API, and send updates over the COM port to the Arduino.  
 When started, it will scan all the available COM ports for the iRacing Matrix,  
 You can provide a fixed COM in the paramaters for faster startup.  
@@ -106,7 +106,7 @@ Follow these steps to build and use iRacing Matrix:
    - Connect the Arduino via usb to you computer.
 
 3. **Run:**
-   - Run *iracing_matrix.exe* on your iRacing pc. It will automiticly scan the COM ports for iRacing Matrix.
+   - Run [iracing_matrix.exe](https://github.com/jelleh/iracing-matrix/releases/download/v1.0/iracing_matrix.exe) on your iRacing pc. It will automiticly scan the COM ports for iRacing Matrix.
 
 4. **Calibrate:**
    - Enter an iRacing session, and full throtle in netrual gear to calibrate the RPM indicator.
