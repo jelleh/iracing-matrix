@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "MinGW-w64 Cross",
+            "includePath": [
+                "${workspaceFolder}/program/iracing_matrix",
+                "${workspaceFolder}/program/iracing_matrix/irsdk",
+                "${workspaceFolder}/program/iracing_matrix/irsdk/irsdk_ir2ad"
+            ],
+            "defines": [
+                "_WIN32",
+                "WINVER=0x0501",
+                "_WIN32_WINNT=0x0501"
+            ],
+            "compilerPath": "/usr/bin/x86_64-w64-mingw32-g++",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

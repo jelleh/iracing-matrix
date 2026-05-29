@@ -58,3 +58,12 @@ history:
 
 2020/12/31 - Maintenance update
 - Update of project files to VS2019
+
+2021/05/21 - Maintenance update, added message support for control over video recording and screenshots.  
+
+2024/03/04 - New rain defines, new .ibt irsdkDiskWriter class.  
+
+2024/03/06 - New rain defines  
+
+2024/03/18 - New tire compound change enum  
+

@@ -57,6 +57,9 @@ bool irsdkClient::waitForData(int timeoutMS)
 			// indicate a new connection
 			m_statusID++;
 
+			// reset session info str status
+			m_lastSessionCt = -1;
+
 			// and try to fill in the data
 			if(irsdk_getNewData(m_data))
 				return true;
@@ -73,6 +76,9 @@ bool irsdkClient::waitForData(int timeoutMS)
 		if(m_data)
 			delete[] m_data;
 		m_data = NULL;
+
+		// reset session info str status
+		m_lastSessionCt = -1;
 	}
 
 	return false;
@@ -84,6 +90,9 @@ void irsdkClient::shutdown()
 	if(m_data)
 		delete[] m_data;
 	m_data = NULL;
+
+	// reset session info str status
+	m_lastSessionCt = -1;
 }
 
 bool irsdkClient::isConnected()
@@ -98,7 +107,7 @@ int irsdkClient::getVarIdx(const char*name)
 		return irsdk_varNameToIndex(name);
 	}
 
-	return 0;
+	return -1;
 }
 
 int /*irsdk_VarType*/ irsdkClient::getVarType(int idx)
@@ -347,43 +356,76 @@ int irsdkClient::getSessionStrVal(const char *path, char *val, int valLen)
 {
 	if(isConnected() && path && val && valLen > 0)
 	{
+		// track changes in string
+		m_lastSessionCt = getSessionCt(); 
+
 		const char *tVal = NULL;
 		int tValLen = 0;
 		if(parseYaml(irsdk_getSessionInfoStr(), path, &tVal, &tValLen))
 		{
 			// dont overflow out buffer
 			int len = tValLen;
-			if(len > valLen)
-				len = valLen;
+			if(len > (valLen-1)) // reserve space for null termination
+				len = (valLen-1);
 
 			// copy what we can, even if buffer too small
 			memcpy(val, tVal, len);
 			val[len] = '\0'; // origional string has no null termination...
 
 			// if buffer was big enough, return success
-			if(valLen >= tValLen)
+			if((valLen-1) >= tValLen)
 				return 1;
 			else // return size of buffer needed
-				return -tValLen;
+				return -(tValLen + 1);
 		}
 	}
 
 	return 0;
 }
 
+// get the whole string
+const char* irsdkClient::getSessionStr() 
+{ 
+	if(isConnected())
+	{
+		m_lastSessionCt = getSessionCt(); 
+		return irsdk_getSessionInfoStr(); 
+	}
+
+	return NULL;
+}
+
+
 //----------------------------------
 
-irsdkCVar::irsdkCVar(const char *name)
-	: m_idx(0)
+irsdkCVar::irsdkCVar()
+	: m_idx(-1)
 	, m_statusID(-1)
 {
-	if(name)
+	m_name[0] = '\0';
+}
+
+irsdkCVar::irsdkCVar(const char *name)
+{
+	m_name[0] = '\0';
+	setVarName(name);
+}
+
+void irsdkCVar::setVarName(const char *name)
+{
+	if(!name || 0 != strncmp(name, m_name, sizeof(m_name)))
 	{
-		strncpy(m_name, name, max_string);
-		m_name[max_string-1] = '\0';
+		m_idx = -1;
+		m_statusID = -1;
+
+		if(name)
+		{
+			strncpy(m_name, name, max_string);
+			m_name[max_string-1] = '\0';
+		}
+		else
+			m_name[0] = '\0';
 	}
-	else
-		m_name[0] = '\0';
 }
 
 bool irsdkCVar::checkIdx()
@@ -414,6 +456,12 @@ int irsdkCVar::getCount()
 	if(checkIdx())
 		return irsdkClient::instance().getVarCount(m_idx);
 	return 0;
+}
+
+bool irsdkCVar::isValid()
+{
+	checkIdx();
+	return (m_idx > -1);
 }
 
 

@@ -1,6 +1,6 @@
-#include <Windows.h>
+#include <windows.h>
 #include <stdio.h>
-#include <stdarg.h>
+#include<stdarg.h>
 
 #include "serial.h"
 
@@ -99,10 +99,10 @@ int Serial::writeSerial(const char *buf)
 	DWORD bytesWritten = 0;
 	if(buf)
 	{
-		int len = strlen(buf);
+		size_t len = strlen(buf);
 		if(m_serial)
 		{
-			if(WriteFile(m_serial, buf, len, &bytesWritten, NULL))
+			if(WriteFile(m_serial, buf, (DWORD)len, &bytesWritten, NULL))
 			{
 				// success
 			}

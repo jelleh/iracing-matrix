@@ -260,6 +260,15 @@ const char *irsdk_getSessionInfoStr()
 	return NULL;
 }
 
+int irsdk_getSessionInfoStrUpdate()
+{
+	if(isInitialized)
+	{
+		return pHeader->sessionInfoUpdate;
+	}
+	return -1;
+}
+
 const irsdk_varHeader *irsdk_getVarHeaderPtr()
 {
 	if(isInitialized)
@@ -329,7 +338,7 @@ unsigned int irsdk_getBroadcastMsgID()
 
 void irsdk_broadcastMsg(irsdk_BroadcastMsg msg, int var1, int var2, int var3)
 {
-	irsdk_broadcastMsg(msg, var1, MAKELONG(var2, var3));
+	irsdk_broadcastMsg(msg, var1, (int)MAKELONG(var2, var3));
 }
 
 void irsdk_broadcastMsg(irsdk_BroadcastMsg msg, int var1, float var2)

@@ -44,13 +44,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 #include <string.h>
 #include <conio.h>
 #include <time.h>
 
 #include "irsdk_defines.h"
 #include "irsdk_csvclient.h"
+
+//****Note, modify these to fit your CSV file format
+int g_updateRate_Hz = 10;// 60;
+//****Note, if nameLine is -1, we will attempt to auto detect all lines
+int g_nameLine = 14;// -1;
+int g_descriptionLine = -1;
+int g_unitsLine = 15;// -1;
+int g_dataType_Line = -1;
+int g_dataStartLine = 18;// -1;
+
 
 irsdkCSVClient ick;
 FILE *pIBT = NULL;
@@ -60,57 +70,6 @@ int g_sessionTimeOffset = -1;
 
 const char g_lapIndexString[] = "Lap";
 int g_lapIndexOffset = -1;
-
-/*
-// place holders for variables that need to be updated in the header of our session string
-double startTime;
-long int startTimeOffset;
-
-double endTime;
-long int endTimeOffset;
-
-int lastLap;
-int lapCount;
-long int lapCountOffset;
-
-int recordCount;
-long int recordCountOffset;
-
-static const int reserveCount = 32;
-// reserve a little space in the file for a number to be written
-long int fileReserveSpace(FILE *file)
-{
-	long int pos = ftell(file);
-
-	int count = reserveCount;
-	while(count--)
-		fputc(' ', file);
-	fputs("\n", file);
-
-	return pos;
-}
-
-// fill in a number in our reserved space, without overwriting the newline
-void fileWriteReservedInt(FILE *file, long int pos, int value)
-{
-	long int curpos = ftell(file);
-
-	fseek(file, pos, SEEK_SET);
-	fprintf(file, "%d", value);
-
-	fseek(file, curpos, SEEK_SET);
-}
-
-void fileWriteReservedFloat(FILE *file, long int pos, double value)
-{
-	long int curpos = ftell(file);
-
-	fseek(file, pos, SEEK_SET);
-	fprintf(file, "%f", value);
-
-	fseek(file, curpos, SEEK_SET);
-}
-*/
 
 // place holders for data that needs to be updated in our IBT file
 irsdk_header g_diskHeader;
@@ -157,7 +116,7 @@ FILE *openUniqueFile(const char *name, const char *ext, bool asBinary)
 }
 
 // log header to ibt binary format
-void logHeaderToIBT(irsdkCSVClient *pCSV, FILE *pIBT)
+void logHeaderToIBT(irsdkCSVClient *pCSV, FILE *pIBT, int updateRate_Hz)
 {
 	if(pCSV && pIBT)
 	{
@@ -166,7 +125,7 @@ void logHeaderToIBT(irsdkCSVClient *pCSV, FILE *pIBT)
 		// main header
 		g_diskHeader.ver = 1;
 		g_diskHeader.status = irsdk_stConnected;
-		g_diskHeader.tickRate = 60;
+		g_diskHeader.tickRate = updateRate_Hz;
 		g_diskHeader.numVars = pCSV->getVarCount();
 		g_diskHeader.bufLen = g_diskHeader.numVars * sizeof(float);
 		offset += sizeof(g_diskHeader);
@@ -252,10 +211,10 @@ void logCloseIBT(FILE *pIBT)
 	}
 }
 
-
 bool init(char *path)
 {
-	if(ick.openFile(path))
+	// name, description, units, data type, data line
+	if(ick.openFile(path, g_nameLine, g_descriptionLine, g_unitsLine, g_dataType_Line, g_dataStartLine))
 	{
 		g_sessionTimeOffset = ick.getVarIdx(g_sessionTimeString);
 		g_lapIndexOffset = ick.getVarIdx(g_lapIndexString);
@@ -267,7 +226,9 @@ bool init(char *path)
 		pIBT = openUniqueFile(path, "ibt", true);
 		if(pIBT != NULL)
 		{
-			logHeaderToIBT(&ick, pIBT);
+			logHeaderToIBT(&ick, pIBT, g_updateRate_Hz);
+			// we read in one line of data when dealing with header, make sure we save it.
+			logDataToIBT(&ick, pIBT);
 			return true;
 		}
 	}
@@ -283,7 +244,6 @@ void process()
 
 void shutdown()
 {
-
 	logCloseIBT(pIBT);
 
 	ick.closeFile();

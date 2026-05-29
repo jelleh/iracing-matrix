@@ -42,15 +42,10 @@ public:
 		, m_varBuf(NULL)
 		, m_varCount(0)
 	{
+		//****FixMe, need to strip out SessionLogInfo: from preexisting yaml string!
 		const char dummyStr[] =  
 			"---\n"
 			"WeekendInfo:\n"
-			"SessionLogInfo:\n"
-			" SessionStartDate: 2016-10-11 1:59:23\n"
-			" SessionStartTime: 0.0\n"
-			" SessionEndTime: 1.0\n"
-			" SessionLapCount: 1\n"
-			" SessionRecordCount: 100\n"
 			"...\n";
 		memcpy(yamlStr, dummyStr, strlen(dummyStr) * sizeof(char));
 	}
@@ -68,7 +63,9 @@ public:
 	~irsdkCSVClient() { closeFile(); }
 
 	bool isFileOpen() { return m_csvFile != NULL; }
-	bool openFile(const char *path);
+	bool openFile(const char* path,
+		// optionally define offsets
+		int headerIdx=-1, int descIdx=-1, int unitIdx=-1, int typeIdx=-1, int dataIdx=-1);
 	void closeFile();
 
 	// read next line out of file

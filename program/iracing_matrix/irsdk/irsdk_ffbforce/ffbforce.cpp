@@ -16,7 +16,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 #include <string.h>
 #include <conio.h>
 
@@ -163,7 +163,7 @@ void process()
 	// is this a valid data point?
 	if(isOnTrack &&
 		trackSurface == irsdk_OnTrack &&
-		fabs(speed) > minSpeed_mps &&
+		fabsf(speed) > minSpeed_mps &&
 		torqBin < maxTorque_Nm)
 	{
 		hist[torqBin]++;
@@ -207,12 +207,11 @@ void shutdown()
 		}
 
 #ifdef SIMPLEOUTPUT
-		printf("%d,%0.1f,%0.1f\n", Nm, 212.5f / Nm, 340.0f / Nm);
+		printf("%d,%0.1f\n", Nm, 340.0f /*IR2NMFACTOR*/ / Nm);
 #else
 		// report status
 		printf("\nPeak torque: %d Nm\n", Nm);
-		printf("Strength: %0.1f\n", 212.5f / Nm); //170.0f / Nm
-		printf("Linear Strength: %0.1f\n", 340.0f / Nm);
+		printf("Strength: %0.1f\n", 340.0f /*IR2NMFACTOR*/ / Nm);
 
 		// dump data to file
 		FILE *out = fopen(outFile, "w");

@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build iracing_matrix (MinGW)",
+            "type": "shell",
+            "command": "x86_64-w64-mingw32-g++",
+            "args": [
+                "-o", "iracing_matrix.exe",
+                "iracing_matrix.cpp",
+                "irsdk/irsdk_client.cpp",
+                "irsdk/irsdk_utils.cpp",
+                "irsdk/yaml_parser.cpp",
+                "irsdk/irsdk_ir2ad/serial.cpp",
+                "-I", "irsdk",
+                "-I", "irsdk/irsdk_ir2ad",
+                "-lwinmm",
+                "-static",
+                "-O2"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/program/iracing_matrix"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$gcc"
+        }
+    ]
+}

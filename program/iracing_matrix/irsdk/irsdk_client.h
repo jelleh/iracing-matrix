@@ -68,8 +68,20 @@ public:
 	double getVarDouble(int idx, int entry = 0);
 	double getVarDouble(const char *name, int entry = 0) { return getVarDouble(getVarIdx(name), entry); }
 
-	// 1 success, 0 failure, -n minimum buffer size
+	//---
+
+	// value that increments with each update to string
+	int getSessionCt() { return irsdk_getSessionInfoStrUpdate(); }
+
+	// has string changed since we last read any values from it
+	bool wasSessionStrUpdated() { return m_lastSessionCt != getSessionCt(); } 
+
+	// pars string for individual value, 1 success, 0 failure, -n minimum buffer size
+	//****Note, this is a linear parser, so it is slow!
 	int getSessionStrVal(const char *path, char *val, int valLen);
+
+	// get the whole string
+	const char *getSessionStr();
 
 protected:
 
@@ -77,6 +89,7 @@ protected:
 		: m_data(NULL)
 		, m_nData(0)
 		, m_statusID(0)
+		, m_lastSessionCt(-1)
 	{ }
 
 	~irsdkClient() { shutdown(); }
@@ -87,6 +100,8 @@ protected:
 	int m_nData;
 	int m_statusID;
 
+	int m_lastSessionCt;
+
 	static irsdkClient *m_instance;
 };
 
@@ -96,11 +111,15 @@ protected:
 class irsdkCVar
 {
 public:
+	irsdkCVar();
 	irsdkCVar(const char *name);
+
+	void setVarName(const char *name);
 
 	// returns irsdk_VarType as int so we don't depend on irsdk_defines.h
 	int getType();
 	int getCount();
+	bool isValid();
 
 	// entry is the array offset, or 0 if not an array element
 	bool getBool(int entry = 0);

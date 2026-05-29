@@ -74,6 +74,20 @@ To build iRacing Matrix, you will need the following components:
 <img src="./media/iracing_matrix-base-stl.jpg" height="250" alt="Housing base"> </img>  
 Download on [Thingiverse](https://www.thingiverse.com/thing:6325240/files)  
 
+## Building from source
+
+Requires [MinGW-w64](https://www.mingw-w64.org/) (cross-compile on Linux) or Visual Studio (on Windows).
+
+**VS Code (Linux):** open the repo, then **Terminal → Run Build Task** — this runs the MinGW-w64 cross-compiler and outputs `iracing_matrix.exe`.
+
+**CLI (Linux):**
+```bash
+cd program/iracing_matrix
+x86_64-w64-mingw32-g++ -o iracing_matrix.exe iracing_matrix.cpp irsdk/irsdk_client.cpp irsdk/irsdk_utils.cpp irsdk/yaml_parser.cpp irsdk/irsdk_ir2ad/serial.cpp -I irsdk -I irsdk/irsdk_ir2ad -lwinmm -static -O2
+```
+
+**Visual Studio (Windows):** open `program/iracing_matrix.sln` and build.
+
 ## Executable
 
 Download the prebuild [iracing_matrix.exe](https://github.com/jelleh/iracing-matrix/releases/download/v1.0/iracing_matrix.exe), or build it from source with Visual Studio.  

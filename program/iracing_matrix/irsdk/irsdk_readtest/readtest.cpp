@@ -98,7 +98,7 @@ void writeCSVVarHeaders(FILE *file, irsdk_header *header, irsdk_varHeader *varHe
 			for(j=0; j<count; j++)
 			{
 				if((i+j) > 0)
-					fputs(", ", file);
+					fputs(",", file);
 
 				if(count>1)
 					fprintf(file, "%s_%02d",varHeaders[i].name, j);
@@ -114,7 +114,7 @@ void writeCSVVarHeaders(FILE *file, irsdk_header *header, irsdk_varHeader *varHe
 			for(j=0; j<count; j++)
 			{
 				if((i+j) > 0)
-					fputs(", ", file);
+					fputs(",", file);
 
 				fputs(varHeaders[i].desc, file);
 			}
@@ -127,7 +127,7 @@ void writeCSVVarHeaders(FILE *file, irsdk_header *header, irsdk_varHeader *varHe
 			for(j=0; j<count; j++)
 			{
 				if((i+j) > 0)
-					fputs(", ", file);
+					fputs(",", file);
 
 				fputs(varHeaders[i].unit, file);
 			}
@@ -140,7 +140,7 @@ void writeCSVVarHeaders(FILE *file, irsdk_header *header, irsdk_varHeader *varHe
 			for(j=0; j<count; j++)
 			{
 				if((i+j) > 0)
-					fputs(", ", file);
+					fputs(",", file);
 
 				switch(varHeaders[i].type)
 				{
@@ -174,7 +174,7 @@ void writeCSVData(FILE *file, irsdk_header *header, irsdk_varHeader *varHeaders,
 			for(j=0; j<count; j++)
 			{
 				if((i+j) > 0)
-					fputs(", ", file);
+					fputs(",", file);
 
 				switch(rec->type)
 				{
@@ -243,19 +243,34 @@ int main(int argc, char **argv)
 									{
 										fseek(file, header.varBuf[0].bufOffset, SEEK_SET);
 
-										// append .csv to file name
-										char * fname = new char[strlen(fsrcName)+5];
+										char *fname = new char[strlen(fsrcName)+5];
+										char *c;
+										FILE *fout;
+
+										// append .txt to file name
 										strcpy(fname, fsrcName);
-										char *c = strrchr(fname,'.');
+										c = strrchr(fname,'.');
+										if(NULL == c)
+											c = fname+strlen(fsrcName);
+										sprintf(c,".txt");
+
+										fout = fopen(fname, "w");
+										if (fout)
+										{
+											writeCSVSessionString(fout, &diskSubHeader, sessionInfoString);
+											fclose(fout);
+										}
+
+										// append .csv to file name
+										strcpy(fname, fsrcName);
+										c = strrchr(fname,'.');
 										if(NULL == c)
 											c = fname+strlen(fsrcName);
 										sprintf(c,".csv");
 
-										FILE *fout = fopen(fname, "w");
+										fout = fopen(fname, "w");
 										if(fout)
 										{
-											writeCSVSessionString(fout, &diskSubHeader, sessionInfoString);
-
 											writeCSVVarHeaders(fout, &header, varHeaders);
 
 											len = header.bufLen;
@@ -266,6 +281,7 @@ int main(int argc, char **argv)
 										}
 										else
 											printf("failed to open outfile %s\n", fname);
+
 										delete []fname;
 										fname = NULL;
 

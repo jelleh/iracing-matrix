@@ -43,8 +43,12 @@ int sessionTimeOffset = -1;
 float timeCount = 0;
 bool hasSessionTime = false;
 
+int lapOffset = -1;
+bool hasLap = false;
 
-bool irsdkCSVClient::openFile(const char *path)
+
+bool irsdkCSVClient::openFile(const char *path, 
+	int headerIdx, int descIdx, int unitIdx, int typeIdx, int dataIdx)
 {
 	closeFile();
 
@@ -60,20 +64,45 @@ bool irsdkCSVClient::openFile(const char *path)
 		bool isYAMLStr = false;
 
 		// grab the header
+		int lineIdx = 0;
 		while(fgets(line, MAX_LINE, m_csvFile) && strlen(line) > 0)
 		{
+			lineIdx++; // index from 1!
 			line[MAX_LINE-1] = '\0';
-			line_type type = getLineType(line, hasHeader, hasDesc, hasUnit, hasType, hasConversion, isYAMLStr);
+			line_type type = ltMisc;
+
+			// did they manually specify the data header?, then use that
+			if (headerIdx > 0)
+			{
+				if (lineIdx == headerIdx)
+					type = ltHeader;
+				else if (lineIdx == descIdx)
+					type = ltDescription;
+				else if (lineIdx == unitIdx)
+					type = ltUnit;
+				else if (lineIdx == typeIdx)
+					type = ltType;
+				else if (lineIdx >= dataIdx)
+					type = ltData;
+			}
+			else // otherwise try to auto detect
+				type = getLineType(line, hasHeader, hasDesc, hasUnit, hasType, hasConversion, isYAMLStr);
+
+			// Process the lines, now that we know what they are
 
 			if(type == ltYAMLStart || type == ltYAMLContent || type == ltYAMLEnd)
 			{
-				strcpy(yamlStr, line); //****FixMe, not safe, keep track of string length and don't overflow buffer
+				// for now only support one yaml string
+				if(type == ltYAMLStart)
+					yamlStr[0] = '\0';
+
+				strcat(yamlStr, line); //****FixMe, not safe, keep track of string length and don't overflow buffer
 			}
 			else if(type == ltHeader)
 			{
 				int len = (int)strlen(line);
 				// guess at how many entrys there are
-				int count = 2; // there must be at least one, we hope, and we need room for SessionTime
+				int count = 3; // there must be at least one, we hope, and we need room for SessionTime and Lap
 				for(int i=0; i < len; i++)
 				{
 					if(line[i] == ',')
@@ -105,10 +134,18 @@ bool irsdkCSVClient::openFile(const char *path)
 					while(st != NULL && m_varCount < count)
 					{
 						parceNameAndUnit(st, m_varHeaders[m_varCount], offset);
+
 						if(strcmp(m_varHeaders[m_varCount].name, "SessionTime") == 0)
 							hasSessionTime = true;
 						else if(strcmp(m_varHeaders[m_varCount].name, "Time") == 0)
 							timeOffset = m_varCount;
+
+						if(strcmp(m_varHeaders[m_varCount].name, "Lap") == 0)
+							hasLap = true;
+
+						m_varScale[m_varCount].mul = 1;
+						m_varScale[m_varCount].add = 0;
+						m_varHeaders[m_varCount].type = irsdk_float; // assume float data by default
 						m_varCount++;
 
 						st = getNextElement(NULL);
@@ -119,6 +156,20 @@ bool irsdkCSVClient::openFile(const char *path)
 					{
 						parceNameAndUnit("SessionTime[s]", m_varHeaders[m_varCount], offset);
 						sessionTimeOffset = m_varCount;
+						m_varScale[m_varCount].mul = 1;
+						m_varScale[m_varCount].add = 0;
+						m_varHeaders[m_varCount].type = irsdk_float; // assume float data by default
+						m_varCount++;
+					}
+
+					// make sure thers is a variabl called Lap
+					if(!hasLap)
+					{
+						parceNameAndUnit("Lap[]", m_varHeaders[m_varCount], offset);
+						lapOffset = m_varCount;
+						m_varScale[m_varCount].mul = 1;
+						m_varScale[m_varCount].add = 0;
+						m_varHeaders[m_varCount].type = irsdk_float; // assume float data by default
 						m_varCount++;
 					}
 				}
@@ -269,6 +320,10 @@ bool irsdkCSVClient::parseDataLine(char* line)
 				}
 			}
 
+			// fake up a lap entry
+			if(!hasLap)
+				m_varBuf[lapOffset] = 0;
+
 			return true;
 		}
 	}
@@ -347,7 +402,7 @@ void irsdkCSVClient::parceNameAndUnit(const char *str, irsdk_varHeader &head, in
 				offset = 0;
 				isUnit = true;
 			}
-			else if(str[0] == ']' || str[0] == ' ' || str[0] == '\t')
+			else if(str[0] == ']' || str[0] == ' ' || str[0] == '\t' || str[0] == '\n' || str[0] == '\r')
 			{
 				// do nothing
 			}
@@ -506,37 +561,52 @@ char* irsdkCSVClient::stripEnds(char *st)
 	{
 		while(st[0] == ' ' || st[0] == '\t')
 			st++;
-		while(st[0] && (st[strlen(st)-1] == ' ' || st[strlen(st)-1] == '\t'))
+		while(st[0] && (st[strlen(st)-1] == ' ' || st[strlen(st)-1] == '\t' || st[strlen(st)-1] == '\n' || st[strlen(st)-1] == '\r'))
 			st[strlen(st)-1] = '\0';
 	}
 
 	return st;
 }
 
+//****Warning, this modifies baseStr!
 char* irsdkCSVClient::getNextElement(char *baseStr)
 {
-	static char* str;
+	static char* str = NULL;
 
 	// reset string pointer, if provided
 	if(baseStr)
 		str = baseStr;
 
-	char *s = str;
-	if(str)
-	{
-		while(str[0] && str[0] != ',')
-		{
-			str++;
-		}
+	// check that we have any string left before processing
+	if(!str || *str == '\0')
+		return NULL;
 
-		if(str[0] == ',')
-		{
-			str[0] = '\0';
-			str++;
-		}
-		else if(str[0] == '\0')
-			s = NULL;
+	// stash off the start of the string
+	char *s = str;
+
+	// and search for a delimiter or the end of the string
+	while(str[0] && str[0] != ',' && str[0] != '\n' && str[0] != '\r')
+	{
+		str++;
 	}
+
+	// zero the delimiter if we find it
+	// making sure to eat them all up
+	while(str[0] == ',' || str[0] == '\n' || str[0] == '\r')
+	{
+		str[0] = '\0';
+		str++;
+	}
+
+	// strip quotes
+	//****Note, this is not optimal, we should be able to embed a comma inside a quote
+	if (*s == '"')
+		s++;
+	for (char* st = s; *st != '\0'; st++)
+		if (*st == '"')
+			*st = '\0';
+
+	// return the segment we found
 	return s;
 }
 

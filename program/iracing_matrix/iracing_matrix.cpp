@@ -43,7 +43,8 @@
 
 #pragma warning(disable:4996) //_CRT_SECURE_NO_WARNINGS
 
-#include <Windows.h>
+#include <windows.h>
+#include <cstdint>
 #include <conio.h>
 #include <signal.h>
 #include <string>
@@ -51,7 +52,7 @@
 #include "irsdk_defines.h"
 #include "irsdk_client.h"
 #include "yaml_parser.h"
-#include "irsdk\irsdk_ir2ad\serial.h"
+#include "irsdk/irsdk_ir2ad/serial.h"
 
 // for timeBeginPeriod
 #pragma comment(lib, "Winmm")
@@ -74,7 +75,7 @@ Serial serial;
 
 int comPORT = -1;
 bool firstConnect = true;
-char* exeName = "iracing_matrix.exe";
+const char* exeName = "iracing_matrix.exe";
 char rxDetect[15] = "iracing_matrix";
 
 
