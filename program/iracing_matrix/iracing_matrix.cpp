@@ -134,6 +134,9 @@ bool init()
 			port = portList[i];
 			printf("Connecting to COM%i\t", port);
 
+			// CH340 driver fix: open at 9600 first to initialize the driver, then reopen at full speed
+			serial.openSerial(port, CBR_9600);
+			serial.closeSerial();
 			// open serial
 			if (serial.openSerial(port, CBR_115200))
 			{
@@ -171,7 +174,9 @@ bool init()
 	else {
 		port = comPORT;
 		printf("Connecting to COM%i\t", port);
-		// open serial
+		// CH340 driver fix: open at 9600 first to initialize the driver, then reopen at full speed
+		serial.openSerial(port, CBR_9600);
+		serial.closeSerial();
 		if (serial.openSerial(port, CBR_115200))
 		{
 			printf("Connected\n");
